@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>All Scientific Terms</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 12px;
+      text-align: left;
+    }
+    th {
+      background-color: #0077cc;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 0.9em;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>All Scientific Terms</h1>
+  <table id="terms-table">
+    <thead>
+      <tr>
+        <th>Term</th>
+        <th>Explanation</th>
+        <th>Category</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="footer">Powered by Google Sheets</div>
+
+  <script>
+    const sheetID = "1olqYG38kSAjMnyP8E3FfQxJkotln-kW6hGRb8xgDk_I";
+    const sheetName = "Terms";
+    const apiURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+    fetch(apiURL)
+      .then(res => res.text())
+      .then(rep => {
+        const data = JSON.parse(rep.substr(47).slice(0, -2));
+        const table = document.querySelector("#terms-table tbody");
+
+        data.table.rows.forEach(row => {
+          const term = row.c[0]?.v || "";
+          const explanation = row.c[1]?.v || "";
+          const category = row.c[2]?.v || "";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${term}</td>
+            <td>${explanation}</td>
+            <td>${category}</td>
+          `;
+          table.appendChild(tr);
+        });
+      });
+  </script>
+</body>
+</html>
