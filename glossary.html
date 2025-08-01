@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Science Glossary</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 20px 0;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #343a40;
+      color: white;
+    }
+    tr:nth-child(even) {
+      background-color: #f1f1f1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Science Simplified – Glossary</h1>
+  <input type="text" id="searchInput" placeholder="Search for terms or categories..." onkeyup="filterTerms()"/>
+
+  <table id="termsTable">
+    <thead>
+      <tr>
+        <th>Term</th>
+        <th>Explanation</th>
+        <th>Category</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody">
+      <!-- Rows will be inserted here -->
+    </tbody>
+  </table>
+
+  <script>
+    const sheetID = '1olqYG38kSAjMnyP8E3FfQxJkotln-kW6hGRb8xgDk_I';
+    const sheetName = 'Terms';
+    const apiURL = `https://opensheet.elk.sh/${sheetID}/${sheetName}`;
+
+    fetch(apiURL)
+      .then(response => response.json())
+      .then(data => {
+        const tableBody = document.getElementById("tableBody");
+        data.forEach(row => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${row.A}</td>
+            <td>${row.B}</td>
+            <td>${row.C}</td>
+          `;
+          tableBody.appendChild(tr);
+        });
+      });
+
+    function filterTerms() {
+      const input = document.getElementById("searchInput");
+      const filter = input.value.toLowerCase();
+      const table = document.getElementById("termsTable");
+      const tr = table.getElementsByTagName("tr");
+
+      for (let i = 1; i < tr.length; i++) {
+        const td1 = tr[i].getElementsByTagName("td")[0];
+        const td2 = tr[i].getElementsByTagName("td")[2];
+        if (td1 && td2) {
+          const text1 = td1.textContent || td1.innerText;
+          const text2 = td2.textContent || td2.innerText;
+          tr[i].style.display =
+            text1.toLowerCase().indexOf(filter) > -1 ||
+            text2.toLowerCase().indexOf(filter) > -1
+              ? ""
+              : "none";
+        }
+      }
+    }
+  </script>
+</body>
+</html>
