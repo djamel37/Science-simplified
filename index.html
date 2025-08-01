@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Science Simplified Terms</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f9f9f9; }
+    input { width: 100%; padding: 10px; margin-bottom: 20px; font-size: 16px; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 0 5px rgba(0,0,0,0.1); }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    th { background: #eee; }
+  </style>
+</head>
+<body>
+  <h1>Science Terms Dictionary</h1>
+  <input type="text" id="searchInput" placeholder="Search for a term..." />
+
+  <table id="termsTable">
+    <thead>
+      <tr>
+        <th>Term</th>
+        <th>Definition</th>
+        <th>Category</th>
+      </tr>
+    </thead>
+    <tbody id="termsBody">
+      <!-- Rows will be inserted here -->
+    </tbody>
+  </table>
+
+  <script>
+    const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRJ4b5u7-TGk7Of0_ho2Vvg7zKsykEf0uhcXt0E7XOEVAQQJZAfkuSRaPo3bcvbyVKUuWx2JBFGLGJj/pub?gid=0&single=true&output=csv";
+
+    fetch(sheetUrl)
+      .then(response => response.text())
+      .then(data => {
+        const rows = data.split("\n").slice(1);
+        const tbody = document.getElementById("termsBody");
+        rows.forEach(row => {
+          const cols = row.split(",");
+          if (cols.length >= 3) {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `<td>${cols[0]}</td><td>${cols[1]}</td><td>${cols[2]}</td>`;
+            tbody.appendChild(tr);
+          }
+        });
+      });
+
+    document.getElementById("searchInput").addEventListener("input", function () {
+      const searchTerm = this.value.toLowerCase();
+      const rows = document.querySelectorAll("#termsBody tr");
+      rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? "" : "none";
+      });
+    });
+  </script>
+</body>
+</html>
