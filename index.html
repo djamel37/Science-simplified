@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Science Simplified</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f7f9fc;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+    header {
+      background-color: #1d3557;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #457b9d;
+      color: white;
+      cursor: pointer;
+      border: none;
+    }
+    button:hover {
+      background-color: #1d3557;
+    }
+    #output {
+      margin-top: 20px;
+      background: #e0f2f1;
+      padding: 15px;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Science Simplified</h1>
+    <p>Type a scientific term and get a simplified explanation</p>
+  </header>
+  <main>
+    <input type="text" id="termInput" placeholder="Enter a scientific term..."/>
+    <button onclick="explainTerm()">Explain</button>
+    <div id="output"></div>
+  </main>
+
+  <script>
+    async function explainTerm() {
+      const term = document.getElementById("termInput").value.trim();
+      const output = document.getElementById("output");
+
+      if (!term) {
+        output.innerHTML = "<p>Please enter a term.</p>";
+        return;
+      }
+
+      output.innerHTML = "<p>Loading...</p>";
+
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer "
+          },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
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [
+              { role: "system", content: "You explain scientific terms simply for students." },
+              { role: "user", content: Explain this term in simple language: ${term} }
+            ],
+            temperature: 0.5
+          })
+        });
+
+        const data = await response.json();
+        const message = data.choices?.[0]?.message?.content;
+        output.innerHTML = message ? <p>${message}</p> : "<p>Something went wrong.</p>";
+      } catch (error) {
+        output.innerHTML = <p>Error: ${error.message}</p>;
+      }
+    }
+  </script>
+</body>
+</html>
